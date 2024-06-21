@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparent Login Page</title>
+    <style>
+        * {
+            color: rgb(255, 255, 255);
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        body {
+            background: url('Img/background.jpg') no-repeat center center/cover;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            width: 400px;
+            align-items: center;
+            margin: auto;
+            margin-top: 60px;
+            background-color: rgba(60, 58, 58, 0.41);
+            box-shadow: inset -7px -7px rgba(0, 0, 0, 0.5);
+            border-radius: 25px;
+        }
+
+        .form h1 {
+            font-size: 3rem;
+            border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+            margin: 60px;
+        }
+
+        .box {
+            padding: 12px;
+            margin: 15px;
+            width: 65%;
+            background-color: rgba(0, 0, 0, 0.5);
+            outline: none;
+            border: none;
+            border-radius: 20px;
+            box-shadow: inset -4px -4px rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 1rem;
+        }
+
+        #submit {
+            color: rgb(255, 255, 255);
+            padding: 12px 25px;
+            margin-top: 40px;
+            width: 50%;
+            border-radius: 50px;
+            border: none;
+            outline: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            box-shadow: inset -3px -3px rgba(0, 0, 0, 0.5);
+            font-size: 1rem;
+        }
+
+        #submit:hover {
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        ::placeholder {
+            color: white;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form id="loginForm" class="form">
+        <h1>LOGIN</h1>
+        <input type="email" name="email" class="box" placeholder="Enter Your Username" required>
+        <input type="password" name="password" class="box" placeholder="Enter Your Password" required>
+        <input type="submit" value="LOGIN" id="submit">
+    </form>
+
+    <script>
+        document.getElementById('loginForm').onsubmit = function (event) {
+            event.preventDefault();
+
+            var email = document.querySelector('input[name="email"]').value;
+            var password = document.querySelector('input[name="password"]').value;
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+            })
+                .then(response => response.text())
+                .then(data => {
+
+                    if (data.includes("Successfully Logged In")) {
+                        document.body.innerHTML = `
+                        <div class="form">
+                            <h1>Successfully Logged In</h1>
+                            <p>Welcome to the protected page!</p>
+                        </div>`;
+                    } else {
+                        document.body.innerHTML = `
+                        <div class="form">
+                            <h1>Invalid username or password.</h1>
+                        </div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.body.innerHTML = `
+                    <div class="form">
+                        <h1>Error</h1>
+                        <p>There was an error processing your request.</p>
+                    </div>`;
+                });
+        };
+    </script>
+
+</body>
+
+</html>
